@@ -1,0 +1,2 @@
+# Stops the web server from handing out the database file (Apache / XAMPP)
+Require all denied

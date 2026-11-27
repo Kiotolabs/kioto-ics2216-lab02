@@ -1,0 +1,17 @@
+<!-- Paste this at the bottom of your contact.html (inside <main> or before </body>). -->
+<section class="card">
+  <h2>Send me a message</h2>
+  <form action="submit.php" method="post">
+    <p><label for="name">Your name</label><br>
+       <input type="text" id="name" name="sender_name" required maxlength="80"></p>
+    <p><label for="email">Your email</label><br>
+       <input type="email" id="email" name="sender_email" required></p>
+    <p><label for="msg">Message</label><br>
+       <textarea id="msg" name="message" rows="4" required maxlength="1000"></textarea></p>
+    <!-- spam trap: humans leave this empty -->
+    <div style="position:absolute;left:-9999px" aria-hidden="true">
+      <label>Leave empty<input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+    </div>
+    <button class="btn" type="submit">Send</button>
+  </form>
+</section>

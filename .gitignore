@@ -1,0 +1,10 @@
+# Student-generated database (created by setup.php)
+data/*.db
+data/*.db-journal
+data/*.db-wal
+data/*.db-shm
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+*.log
