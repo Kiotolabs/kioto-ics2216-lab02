@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ICS 2216 Lab 2 – Part B (Week 6) Instructions</title>
+<style>
+  :root { --bg:#f7f9fc; --ink:#1f2937; --brand:#1d4ed8; --card:#ffffff; --code:#111827; --codebg:#f3f4f6; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:"Segoe UI", Arial, sans-serif; background:var(--bg); color:var(--ink); line-height:1.65; }
+  header { background:var(--brand); color:#fff; padding:2rem 1.5rem; }
+  header h1 { margin:0 0 .5rem; font-size:1.8rem; }
+  header p { margin:0; opacity:.9; }
+  main { max-width:960px; margin:0 auto; padding:1.5rem; }
+  h2 { color:var(--brand); margin-top:2rem; border-bottom:2px solid #dbeafe; padding-bottom:.3rem; }
+  h3 { margin-top:1.4rem; }
+  .card { background:var(--card); padding:1.2rem 1.4rem; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,.08); margin:1rem 0; }
+  .step { display:flex; gap:.8rem; margin:.6rem 0; }
+  .num { background:var(--brand); color:#fff; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; flex-shrink:0; }
+  pre { background:var(--codebg); border:1px solid #e5e7eb; border-radius:8px; padding:1rem; overflow-x:auto; font-size:.9rem; }
+  code { font-family:Consolas, "Courier New", monospace; }
+  .inline { background:var(--codebg); padding:.1rem .35rem; border-radius:4px; }
+  ul, ol { padding-left:1.4rem; }
+  .note { background:#fffbeb; border-left:4px solid #f59e0b; padding:.8rem 1rem; border-radius:6px; margin:1rem 0; }
+  .good { background:#ecfdf5; border-left:4px solid #10b981; padding:.8rem 1rem; border-radius:6px; margin:1rem 0; }
+  .warn { background:#fef2f2; border-left:4px solid #ef4444; padding:.8rem 1rem; border-radius:6px; margin:1rem 0; }
+  table { width:100%; border-collapse:collapse; margin:.8rem 0; }
+  th, td { border:1px solid #e5e7eb; padding:.6rem; text-align:left; }
+  th { background:#eff6ff; }
+  footer { text-align:center; padding:2rem; font-size:.9rem; color:#6b7280; }
+  .toc a { color:var(--brand); text-decoration:none; }
+  .toc a:hover { text-decoration:underline; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>ICS 2216 Lab 2 – Part B (Week 6)</h1>
+  <p>Give Your Portfolio a Database Brain &nbsp;|&nbsp; Applied Computing &nbsp;|&nbsp; Non-technical, step-by-step guide</p>
+</header>
+
+<main>
+
+<div class="card">
+  <h2 style="margin-top:0">What you will do</h2>
+  <p>In Part A you built a static website. In Part B you will design a small database that could power your portfolio, and you will connect your contact form to it so that messages people send you are saved automatically.</p>
+  <p><strong>You do not need to write any backend code.</strong> Your instructor has already written it. You only need to download it, run it, and understand how it works.</p>
+  <div class="note"><strong>Golden rule:</strong> Every step below is numbered. Do not skip a step. If something does not work, scroll to the <a href="#trouble">Troubleshooting</a> section at the bottom.</div>
+</div>
+
+<div class="card toc">
+  <strong>Table of contents</strong>
+  <ol>
+    <li><a href="#tools">Tools you need</a></li>
+    <li><a href="#step12">Step 12 – Identify what needs storing</a></li>
+    <li><a href="#step13">Step 13 – Draw your ER diagram</a></li>
+    <li><a href="#step14">Step 14 – Create the tables</a></li>
+    <li><a href="#step15">Step 15 – Enter your records</a></li>
+    <li><a href="#step16">Step 16 – Ask questions with SQL</a></li>
+    <li><a href="#step17">Step 17 – Connect the contact form to the database</a></li>
+    <li><a href="#submit">Submission checklist</a></li>
+    <li><a href="#reflect">Reflection questions</a></li>
+    <li><a href="#trouble">Troubleshooting</a></li>
+  </ol>
+</div>
+
+<h2 id="tools">Tools you need</h2>
+<div class="card">
+  <ul>
+    <li><strong>DB Browser for SQLite</strong> (free) – for designing and viewing your database. Download from <span class="inline">sqlitebrowser.org</span>.</li>
+    <li><strong>XAMPP or Laragon</strong> – to run PHP on your computer. (Your instructor will tell you which one. Start only Apache.)</li>
+    <li><strong>Your Part A website folder</strong> called <span class="inline">my-portfolio</span> (with your HTML, CSS and images).</li>
+    <li><strong>A web browser</strong> (Chrome or Firefox).</li>
+  </ul>
+  <div class="note">You do <strong>not</strong> need MySQL, command lines, or any programming language besides what is listed.</div>
+</div>
+
+<h2 id="step12">Step 12 – Identify what needs storing (10 minutes)</h2>
+<div class="card">
+  <p>Look at your five pages. What information is repeated or changes often? Typically:</p>
+  <ul>
+    <li>Your profile (name, programme, bio)</li>
+    <li>Your skills</li>
+    <li>Your hobbies</li>
+    <li>Your top movies</li>
+    <li>Messages people send you through the contact form</li>
+  </ul>
+  <p>Write these down in your notebook. This is the list of things your database will store.</p>
+</div>
+
+<h2 id="step13">Step 13 – Draw your ER diagram (15 minutes)</h2>
+<div class="card">
+  <p>One person (profile) has many skills, hobbies, movies and enquiries. This is a <strong>one-to-many relationship</strong>. Sketch this on paper:</p>
+  <pre><code>            +-----------+
+            |  PROFILE  |
+            |-----------|
+            | profile_id|  &lt;-- Primary Key (PK)
+            | full_name |
+            | programme |
+            | bio       |
+            +-----+-----+
+                  | 1
+   +--------+-----+-----+----------+
+   | many   | many      | many     | many
++--v---+ +--v----+  +---v---+  +---v-----+
+|SKILL | |HOBBY  |  |MOVIE  |  |ENQUIRY  |
++------+ +-------+  +-------+  +---------+
+ each has its own PK and a Foreign Key (FK): profile_id</code></pre>
+  <p><strong>Primary Key (PK)</strong> = a column that uniquely identifies each row (like an ID number).<br>
+     <strong>Foreign Key (FK)</strong> = a column that links a row back to its owner (e.g. which profile a skill belongs to).</p>
+  <p>Take a clear photo of your sketch. You will submit it.</p>
+</div>
+
+<h2 id="step14">Step 14 – Create the tables (20 minutes)</h2>
+<div class="card">
+  <p>Open <strong>DB Browser for SQLite</strong>, click <em>New Database</em>, name it <span class="inline">portfolio.db</span> and save it inside a folder called <span class="inline">data</span> in your <span class="inline">my-portfolio</span> folder.</p>
+  <p>Click the <em>Execute SQL</em> tab, paste ALL of the code below, then click <strong>Run</strong> (the play button).</p>
+  <pre><code>CREATE TABLE profile (
+  profile_id INTEGER PRIMARY KEY,
+  full_name  TEXT NOT NULL,
+  programme  TEXT,
+  bio        TEXT
+);
+CREATE TABLE skill (
+  skill_id   INTEGER PRIMARY KEY,
+  profile_id INTEGER NOT NULL,
+  skill_name TEXT NOT NULL,
+  level      TEXT,
+  FOREIGN KEY (profile_id) REFERENCES profile(profile_id)
+);
+CREATE TABLE hobby (
+  hobby_id    INTEGER PRIMARY KEY,
+  profile_id  INTEGER NOT NULL,
+  hobby_name  TEXT NOT NULL,
+  description TEXT,
+  FOREIGN KEY (profile_id) REFERENCES profile(profile_id)
+);
+CREATE TABLE movie (
+  movie_id     INTEGER PRIMARY KEY,
+  profile_id   INTEGER NOT NULL,
+  title        TEXT NOT NULL,
+  release_year INTEGER,
+  my_rank      INTEGER,
+  why_i_love_it TEXT,
+  FOREIGN KEY (profile_id) REFERENCES profile(profile_id)
+);
+CREATE TABLE enquiry (
+  enquiry_id   INTEGER PRIMARY KEY,
+  profile_id   INTEGER NOT NULL,
+  sender_name  TEXT NOT NULL,
+  sender_email TEXT NOT NULL,
+  message      TEXT NOT NULL,
+  sent_at      TEXT DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (profile_id) REFERENCES profile(profile_id)
+);</code></pre>
+  <div class="good">You should see “Query executed successfully”. If you get an error, you probably missed a semicolon or bracket. Copy the code again carefully.</div>
+</div>
+
+<h2 id="step15">Step 15 – Enter your records (15 minutes)</h2>
+<div class="card">
+  <p>Each row in a table is a <strong>record</strong>; each column is a <strong>field</strong>. Add yourself first, then your data. In DB Browser, go to <em>Browse Data</em> and click <strong>New Record</strong>, OR run these INSERT statements in the Execute SQL tab.</p>
+  <p>Replace the sample text with your own information:</p>
+  <pre><code>INSERT INTO profile (full_name, programme, bio)
+VALUES ('Your Name', 'BSc. Fisheries and Aquaculture', 'Your short bio');
+
+INSERT INTO skill (profile_id, skill_name, level)
+VALUES (1, 'Microsoft Word', 'Advanced'),
+       (1, 'HTML and CSS', 'Beginner');
+
+INSERT INTO hobby (profile_id, hobby_name, description)
+VALUES (1, 'Football', 'Weekend matches with friends');
+
+INSERT INTO movie (profile_id, title, release_year, my_rank, why_i_love_it)
+VALUES (1, 'Your Movie 1', 2010, 1, 'Because...'),
+       (1, 'Your Movie 2', 2015, 2, 'Because...');</code></pre>
+  <p>Add <strong>all 5 movies</strong>, at least <strong>3 hobbies</strong> and at least <strong>5 skills</strong>. Notice that <span class="inline">profile_id = 1</span> in each row is the foreign key linking the record back to you.</p>
+  <div class="note">Tip: if you prefer clicking, use the <em>Browse Data</em> tab and the <strong>New Record</strong> button. Both ways are fine.</div>
+</div>
+
+<h2 id="step16">Step 16 – Ask questions with SQL (20 minutes)</h2>
+<div class="card">
+  <p>Run each query in DB Browser (Execute SQL tab) and write the output (or a screenshot) in your lab report.</p>
+  <pre><code>-- 1. Show my full profile
+SELECT * FROM profile;
+
+-- 2. My movies in rank order (sorting)
+SELECT title, release_year FROM movie ORDER BY my_rank;
+
+-- 3. Only movies released after 2010 (filtering)
+SELECT title FROM movie WHERE release_year &gt; 2010;
+
+-- 4. Combine tables: my name with each of my hobbies (relationship)
+SELECT profile.full_name, hobby.hobby_name
+FROM profile
+JOIN hobby ON hobby.profile_id = profile.profile_id;
+
+-- 5. How many skills do I list?
+SELECT COUNT(*) FROM skill;</code></pre>
+  <p><strong>Think:</strong> if your movie list were stored in this database, how would the Movies page change when you update a row? Answer: you would edit one record and the page would rebuild itself. No need to rewrite HTML. That is the heart of a dynamic website.</p>
+</div>
+
+<h2 id="step17">Step 17 – Connect the contact form to the database (concept and guided demo)</h2>
+<div class="card">
+  <p><strong>Concepts:</strong> web forms, client-server interaction, backend.</p>
+  <p>You will not write backend code. Your instructor has provided a prepared starter application. Your job is to understand the journey of a message:</p>
+  <pre><code>Visitor types message  -&gt;  Browser (client) sends form data
+   -&gt;  Web server receives it  -&gt;  Server script validates it
+   -&gt;  INSERT INTO enquiry ...  -&gt;  Database stores it
+   -&gt;  Server replies "Thank you!"  -&gt;  Browser shows confirmation</code></pre>
+
+  <h3>Part A – Download the starter from GitHub (no command line)</h3>
+  <div class="step"><div class="num">1</div><div>Open your web browser and go to: <span class="inline">https://github.com/Kiotolabs/kioto-ics2216-lab02</span></div></div>
+  <div class="step"><div class="num">2</div><div>On that page, click the green button called <strong>Code</strong>.</div></div>
+  <div class="step"><div class="num">3</div><div>In the small menu that appears, click <strong>Download ZIP</strong>. The file will be saved to your <em>Downloads</em> folder.</div></div>
+  <div class="step"><div class="num">4</div><div>Open your <em>Downloads</em> folder. Find the file named <span class="inline">kioto-ics2216-lab02-main.zip</span>.</div></div>
+  <div class="step"><div class="num">5</div><div><strong>Right-click</strong> that ZIP file and choose <strong>Extract All…</strong> (on Windows) or double-click it (on Mac). Choose your <strong>Desktop</strong> as the destination and click <strong>Extract</strong>.</div></div>
+  <div class="step"><div class="num">6</div><div>You will now have a folder called <span class="inline">kioto-ics2216-lab02-main</span> on your Desktop. Open it. Inside you will see files like <span class="inline">config.php</span>, <span class="inline">setup.php</span>, <span class="inline">submit.php</span>, and a folder called <span class="inline">data</span>.</div></div>
+  <div class="step"><div class="num">7</div><div>Select <strong>everything inside</strong> that folder (Ctrl+A on Windows, Cmd+A on Mac). Copy it (Ctrl+C / Cmd+C).</div></div>
+  <div class="step"><div class="num">8</div><div>Open your <span class="inline">my-portfolio</span> folder (the one with your HTML, CSS and images). Paste (Ctrl+V / Cmd+V). When asked, choose <strong>Replace / Merge</strong> if prompted.</div></div>
+  <div class="good">After this, <span class="inline">contact.html</span> and <span class="inline">submit.php</span> should be in the <strong>same folder</strong>. That is very important.</div>
+
+  <h3>Part B – Run the backend on your computer</h3>
+  <div class="step"><div class="num">1</div><div>Start <strong>Apache</strong> in XAMPP or Laragon.</div></div>
+  <div class="step"><div class="num">2</div><div>Make sure your <span class="inline">my-portfolio</span> folder is inside the web server folder:<br>
+      XAMPP: <span class="inline">C:\xampp\htdocs\my-portfolio</span><br>
+      Laragon: <span class="inline">C:\laragon\www\my-portfolio</span></div></div>
+  <div class="step"><div class="num">3</div><div>Open your browser and type: <span class="inline">http://localhost/my-portfolio/setup.php</span> and press Enter.</div></div>
+  <div class="step"><div class="num">4</div><div>You should see “Database ready”. This created a file called <span class="inline">portfolio.db</span> inside the <span class="inline">data</span> folder.</div></div>
+  <div class="step"><div class="num">5</div><div>Open the file <span class="inline">config.php</span> in Notepad (or any text editor). Find the line <span class="inline">const ADMIN_PASS = 'change-me-please';</span> and change the password to something only you know. Save the file.</div></div>
+  <div class="warn">Do not share this password. The default one is intentionally weak and shows a warning on the login page.</div>
+
+  <h3>Part C – Add the contact form to your contact page</h3>
+  <p>Open your <span class="inline">contact.html</span> in your text editor. Scroll to the bottom of the <span class="inline">&lt;main&gt;</span> section (just before <span class="inline">&lt;/main&gt;</span>) and paste this form:</p>
+  <pre><code>&lt;section class="card"&gt;
+  &lt;h2&gt;Send me a message&lt;/h2&gt;
+  &lt;form action="submit.php" method="post"&gt;
+    &lt;p&gt;&lt;label for="name"&gt;Your name&lt;/label&gt;&lt;br&gt;
+       &lt;input type="text" id="name" name="sender_name" required maxlength="80"&gt;&lt;/p&gt;
+    &lt;p&gt;&lt;label for="email"&gt;Your email&lt;/label&gt;&lt;br&gt;
+       &lt;input type="email" id="email" name="sender_email" required&gt;&lt;/p&gt;
+    &lt;p&gt;&lt;label for="msg"&gt;Message&lt;/label&gt;&lt;br&gt;
+       &lt;textarea id="msg" name="message" rows="4" required maxlength="1000"&gt;&lt;/textarea&gt;&lt;/p&gt;
+    &lt;!-- spam trap: humans leave this empty --&gt;
+    &lt;div style="position:absolute;left:-9999px" aria-hidden="true"&gt;
+      &lt;label&gt;Leave empty&lt;input type="text" name="website" tabindex="-1" autocomplete="off"&gt;&lt;/label&gt;
+    &lt;/div&gt;
+    &lt;button class="btn" type="submit"&gt;Send&lt;/button&gt;
+  &lt;/form&gt;
+&lt;/section&gt;</code></pre>
+  <div class="note">You can also copy this from the file <span class="inline">snippets/contact-form.html</span> that came with the download.</div>
+  <p>Save <span class="inline">contact.html</span>.</p>
+
+  <h3>Part D – Test the full journey</h3>
+  <div class="step"><div class="num">1</div><div>Open <span class="inline">http://localhost/my-portfolio/contact.html</span> in your browser.</div></div>
+  <div class="step"><div class="num">2</div><div>Fill in the form with a test name, email and message. Click <strong>Send</strong>.</div></div>
+  <div class="step"><div class="num">3</div><div>You should see “Message received!”. That means the server saved your message.</div></div>
+  <div class="step"><div class="num">4</div><div>Open <span class="inline">http://localhost/my-portfolio/admin.php</span>. Enter the password you set in <span class="inline">config.php</span>. Click <strong>Login</strong>.</div></div>
+  <div class="step"><div class="num">5</div><div>You should see your test message in the table. Congratulations – your contact form is connected to your database.</div></div>
+
+  <h3>Part E – (Optional) See a dynamic page</h3>
+  <p>If you added movies to your database (Step 15), open <span class="inline">http://localhost/my-portfolio/movies-live.php</span>. Your movies will appear, pulled live from the database. Edit a row in DB Browser and refresh the page – it changes without editing HTML.</p>
+
+  <h3>Part F – Clean up</h3>
+  <ul>
+    <li>Delete <span class="inline">setup.php</span> from your folder (right-click → Delete). You only needed it once.</li>
+    <li>Do <strong>not</strong> put your <span class="inline">portfolio.db</span> file on GitHub Pages or any public site. It contains personal data.</li>
+  </ul>
+</div>
+
+<h2 id="submit">Submission checklist</h2>
+<div class="card">
+  <p>Submit a ZIP file (or a document with links) containing:</p>
+  <ol>
+    <li>Live website link (GitHub Pages or Google Sites).</li>
+    <li>Your <span class="inline">my-portfolio</span> folder (all HTML, CSS and images).</li>
+    <li>Your <span class="inline">portfolio.db</span> file and a screenshot of each of the 5 SQL queries and results.</li>
+    <li>Your ER diagram (a photo of your hand sketch is fine).</li>
+    <li>A one-page reflection answering the questions in the next section.</li>
+  </ol>
+</div>
+
+<h2 id="reflect">Reflection questions (4 to 6 sentences each)</h2>
+<div class="card">
+  <ol>
+    <li>Describe what happens, step by step, when someone types your website address into their phone. Mention the client, server, DNS and HTTPS.</li>
+    <li>What is the difference between your static website and a dynamic one? Give one example from your own portfolio.</li>
+    <li>Why do we use a separate CSS file instead of styling each page individually?</li>
+    <li>Which accessibility or responsive design choices did you make, and why do they matter?</li>
+    <li>In your database, which field is a primary key and which is a foreign key? Why are they needed?</li>
+    <li>Which personal information did you choose not to publish, and why?</li>
+  </ol>
+</div>
+
+<h2>Marking guide (100 marks)</h2>
+<div class="card">
+  <table>
+    <tr><th>Criterion</th><th>Marks</th></tr>
+    <tr><td>Five linked pages working with consistent navigation</td><td>15</td></tr>
+    <tr><td>Image on every page; your photo on the Home page; meaningful alt text</td><td>10</td></tr>
+    <tr><td>Content quality: professional profile and academic content adapted from CV</td><td>15</td></tr>
+    <tr><td>Fun content: hobbies page, Top 5 movies and playlist link</td><td>10</td></tr>
+    <tr><td>Contact page with working email and social media links</td><td>5</td></tr>
+    <tr><td>CSS design, creativity and responsive layout</td><td>10</td></tr>
+    <tr><td>Website published online and accessible</td><td>5</td></tr>
+    <tr><td>Database design: ER diagram, tables, keys and relationships</td><td>15</td></tr>
+    <tr><td>Records entered and SQL queries correct</td><td>10</td></tr>
+    <tr><td>Reflection and explanation of concepts</td><td>5</td></tr>
+  </table>
+</div>
+
+<h2 id="trouble">Troubleshooting</h2>
+<div class="card">
+  <table>
+    <tr><th>Problem</th><th>Likely cause</th><th>Fix</th></tr>
+    <tr><td>Image does not show</td><td>Wrong file name or path, spaces or capitals in the name</td><td>Check <span class="inline">images/my-photo.jpg</span> matches exactly (lowercase, no spaces)</td></tr>
+    <tr><td>Page looks plain with no colours</td><td>style.css not linked or in a different folder</td><td>Check the <span class="inline">&lt;link rel="stylesheet" href="style.css"&gt;</span> line and the file location</td></tr>
+    <tr><td>Link goes to “page not found”</td><td>Typo in href or file missing</td><td>Compare the link text to the real file name</td></tr>
+    <tr><td>Works on my laptop but images are missing online</td><td>Images were not uploaded</td><td>Upload the whole images folder to GitHub</td></tr>
+    <tr><td>Playlist link shows an error</td><td>Playlist is private</td><td>Set it to public, then copy the link again</td></tr>
+    <tr><td>Site not updating on GitHub Pages</td><td>Cache or build delay</td><td>Wait 2 minutes, then hard refresh (Ctrl+F5)</td></tr>
+    <tr><td>SQL error “no such table”</td><td>Table not created yet or name mistyped</td><td>Run the CREATE TABLE statements first (Step 14)</td></tr>
+    <tr><td>submit.php shows an error</td><td>Database folder missing or password not changed</td><td>Run setup.php again; check config.php</td></tr>
+    <tr><td>admin.php says “Incorrect password”</td><td>Wrong password or forgot to save config.php</td><td>Re-open config.php, check ADMIN_PASS, save, refresh</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h3>Bonus challenges (extra credit)</h3>
+  <ul>
+    <li>Add a favicon (small tab icon) using <span class="inline">&lt;link rel="icon" href="images/favicon.png"&gt;</span>.</li>
+    <li>Add a dark mode that follows the device setting using <span class="inline">@media (prefers-color-scheme: dark)</span> in your CSS.</li>
+    <li>Add a “Skills” progress bar using <span class="inline">&lt;progress value="80" max="100"&gt;</span>.</li>
+    <li>Embed your playlist directly on the Movies page.</li>
+    <li>Add a Fish (or environment) fact of the day card on the Home page.</li>
+  </ul>
+</div>
+
+<footer>
+  ICS 2216 Applied Computing &nbsp;|&nbsp; Part B instructions &nbsp;|&nbsp; Keep it honest, keep it kind, keep it fun.
+</footer>
+
+</main>
+</body>
+</html>
